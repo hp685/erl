@@ -65,6 +65,17 @@ whoa() ->
 	    {caught, Exception, Reason}
     end.
 	      
+im_impressed() ->
+    try
+	talk(),
+	_Knight = "None shall Pass!",
+	_Doubles = [N*2 || N <- lists:seq(1,100)],
+	throw(up),
+	_WillReturnThis = tequila
+    catch
+	Exception: Reason ->
+	    {caught, Exception, Reason}
+    end.
 
 
 
