@@ -1,6 +1,7 @@
 -module(kitchen).
 -compile(export_all).
 
+%
 fridge1() ->
     receive
 	{From, {store, _Food}} ->
@@ -16,6 +17,7 @@ fridge1() ->
 % Saving process state
 fridge2(FoodList) ->
     receive
+	%Format of message being received
 	{From, {store, Food}} ->
 	    From ! {self(), ok},
 	    fridge2([Food|FoodList]);
@@ -34,7 +36,8 @@ fridge2(FoodList) ->
 
 % doing away with process protocols
 
-store(Pid, Food) ->	  
+store(Pid, Food) ->
+    % Has to have the same format as in fridge2
     Pid ! {self(), {store, Food}},
     receive
 	{Pid, Msg} ->
@@ -47,3 +50,29 @@ take(Pid, Food) ->
 	{Pid, Msg} ->
 	    Msg
     end.
+
+start(FoodList) ->
+    % ?MODULE is a macro that returns the current module's name
+    spawn(?MODULE, fridge2, [FoodList]).
+
+%Handling timeouts
+store2(Pid, Food) ->
+    Pid ! {self(), {store, Food}},
+    receive
+	{Pid, Msg} ->
+	    Msg
+    after 3000 ->
+	    timeout
+    end.
+
+take2(Pid, Food) ->
+    Pid ! {self(), {store, Food}},
+    receive
+	{Pid, Msg} ->
+	    Msg
+    after 3000 ->
+	    timeout
+    end.
+
+
+
