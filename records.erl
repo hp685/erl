@@ -1,7 +1,13 @@
+
 -module(records).
 -compile(export_all).
+-include("records.hrl").
+included() ->
+    #included{some_field="Some value"}.
 
 -record(user, {id, name, group, age}).
+
+
 
 %pattern matching to filter
 admin_panel(#user{name=Name, group=admin}) ->
@@ -21,7 +27,7 @@ adult_section(_) ->
 -record(robot, {name,
 		type=industrial,
 		hobbies,
-		details=[]}).
+		details=["foobar"]}).
 first_robot() ->
     #robot{name="Mechatron",
 	   type=handmade,
@@ -29,3 +35,8 @@ first_robot() ->
 
 car_factory(CorpName) ->
     #robot{name=CorpName, hobbies="building cars"}.
+
+repairman(Rob) ->
+    Details = Rob#robot.details,
+    NewRob = Rob#robot{details=["Repaired by repairman" | Details]},
+    {repaired, NewRob}.
